@@ -1,13 +1,15 @@
+import math
+
 import pygame as p
 
 p.init()
 screen = p.display.set_mode((1000, 1000))
-p.display.set_caption("Line")
+p.display.set_caption("01")
 clock = p.time.Clock()
-cosPhi = 0.5
-sinPhi = (3 ** 0.5) / 2
-points1 = [[250, 250], [150, 150], [150, 50], [350, 50], [350, 150]]
-points2 = [[250, 250], (350, 350), (350, 450), (150, 450), (150, 350)]
+phi = math.pi / 6
+points1 = [[500, 500], [400, 400], [400, 300], [600, 300], [600, 400]]
+points2 = [[500, 500], [600, 600], [600, 700], [400, 700], [400, 600]]
+center = 500
 running = False
 x = 0
 while not running:
@@ -20,14 +22,22 @@ while not running:
         p.draw.line(screen, (250, 2, 1), [points1[i][0], points1[i][1]],
                     [points1[(i + 1) % 5][0], points1[(i + 1) % 5][1]], 3)
     for i in range(0, 5):
-        p.draw.line(screen, (250, 2, 1), [points2[i][0], points2[i][1]],
+        p.draw.line(screen, (2, 255, 1), [points2[i][0], points2[i][1]],
                     [points2[(i + 1) % 5][0], points2[(i + 1) % 5][1]], 3)
     for i in range(1, 5):
-        points1t0 = (points1[i][0] - points1[0][0]) * cosPhi\
-                    + (points1[i][1] - points1[0][1]) * sinPhi
-        points1t1 = -(points1[i][0] - points1[0][0]) * sinPhi\
-                    + (points1[i][1] - points1[0][1]) * cosPhi
+        points1t0 = center + (points1[i][0] - center) * math.cos(phi) - \
+                    (points1[i][1] - center) * math.sin(phi)
+        points1t1 = center + (points1[i][0] - center) * math.sin(phi) + \
+                    (points1[i][1] - center) * math.cos(phi)
         points1[i][0] = points1t0
         points1[i][1] = points1t1
+
+    for i in range(1, 5):
+        points2t0 = center + (points2[i][0] - center) * math.cos(phi) - \
+                    (points2[i][1] - center) * math.sin(phi)
+        points2t1 = center + (points2[i][0] - center) * math.sin(phi) + \
+                (points2[i][1] - center) * math.cos(phi)
+        points2[i][0] = points2t0
+        points2[i][1] = points2t1
 
     p.display.flip()
