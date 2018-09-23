@@ -14,7 +14,6 @@ while not running:
             running = True
     screen.fill((255, 255, 255))
 
-
     p.draw.line(screen, (140, 140, 140), [2, 100], [400, 100], 58)
     p.draw.line(screen, (0, 255, 0), [6, 100], [2 + x, 100], 50)
     if x != line_end:

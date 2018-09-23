@@ -36,7 +36,7 @@ while not running:
         points2t0 = center + (points2[i][0] - center) * math.cos(phi) - \
                     (points2[i][1] - center) * math.sin(phi)
         points2t1 = center + (points2[i][0] - center) * math.sin(phi) + \
-                (points2[i][1] - center) * math.cos(phi)
+                    (points2[i][1] - center) * math.cos(phi)
         points2[i][0] = points2t0
         points2[i][1] = points2t1
 

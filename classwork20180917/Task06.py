@@ -20,7 +20,7 @@ def draw_rect(i, x):
         p.draw.line(screen, [10 + color_delta * (i // (rect_width + rect_distance)),
                              55 + color_delta * (i // (rect_width + rect_distance)),
                              38 + color_delta * (i // (rect_width + rect_distance))],
-                                [i, 50], [i + rect_width, 50], rect_height)
+                    [i, 50], [i + rect_width, 50], rect_height)
 
 
 while not running:
