@@ -50,12 +50,12 @@ class Player(pg.sprite.Sprite):
 
 
     def left_gun_pos(self):
-        pos = self.rect.centerx - self.gun_offset
-        return pos, self.rect.top
+        pos = self.collideRect.centerx - self.gun_offset
+        return pos, self.collideRect.bottom
 
     def right_gun_pos(self):
-        pos = self.rect.centerx + self.gun_offset
-        return pos, self.rect.top
+        pos = self.collideRect.centerx + self.gun_offset
+        return pos, self.collideRect.bottom
 
     '''def checkCollision(self, a):
         if self.collideRect.collidepoint(a[0], a[1]) == True:
@@ -101,18 +101,15 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
 
 
-class dummysound:
-    def play(self): pass
+
 
 def load_sound(file):
-    if not pg.mixer: return dummysound()
     file = os.path.join(game_dir, 'sounds', file)
     try:
         sound = pg.mixer.Sound(file)
         return sound
     except pg.error:
         print ('Warning, unable to load, %s' % file)
-    return dummysound()
 
 def main():
     pg.init()
@@ -131,7 +128,7 @@ def main():
     # sounds
     crow_sound = load_sound('crow.wav')
     shot_sound = load_sound('shot.wav')
-    shot_sound.set_volume(0.1 )
+    shot_sound.set_volume(0.1)
 
     background = pg.Surface(screen_rect.size)
     background.fill(BACKGROUND_COLOR)
