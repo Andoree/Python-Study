@@ -35,8 +35,8 @@ class Player(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self, self.containers)
         self.image = self.images[0]
-       # self.image = pg.transform.scale(self.image, player_size)
-        self.rect = self.image.get_rect(midbottom=screen_rect.midbottom )
+        # self.image = pg.transform.scale(self.image, player_size)
+        self.rect = self.image.get_rect(midbottom=screen_rect.midbottom)
         self.collideRect = pg.rect.Rect((0, 0), (12, 12))
         self.collideRect.midbottom = self.rect.midbottom
 
@@ -50,12 +50,12 @@ class Player(pg.sprite.Sprite):
 
 
     def left_gun_pos(self):
-        pos = self.collideRect.centerx - self.gun_offset
-        return pos, self.collideRect.bottom
+        pos = self.rect.centerx - self.gun_offset + player_shot_size[0] / 2
+        return pos, self.rect.top
 
     def right_gun_pos(self):
-        pos = self.collideRect.centerx + self.gun_offset
-        return pos, self.collideRect.bottom
+        pos = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
+        return pos, self.rect.top
 
     '''def checkCollision(self, a):
         if self.collideRect.collidepoint(a[0], a[1]) == True:
@@ -70,10 +70,11 @@ class Player_shot(pg.sprite.Sprite):
     def __init__(self, position):
         pg.sprite.Sprite.__init__(self, self.containers)
         self.image = self.images[0]
-        self.rect = self.image.get_rect(midbottom=position)
+        self.rect = self.image.get_rect(midtop = position)
         self.image = pg.transform.scale(self.image, player_shot_size)
         self.collideRect = pg.rect.Rect((0, 0), (32, 32))
         self.collideRect.midbottom = self.rect.midbottom
+
 
     def update(self):
         self.rect.move_ip(0, self.speed)
@@ -89,7 +90,7 @@ class Enemy(pg.sprite.Sprite):
     CROW_SOUND_COOLDOWN = 30
 
     def __init__(self):
-        self.x = random.randrange(0, 11) * 40
+        self.x = random.randrange(0, 10) * 40
         pg.sprite.Sprite.__init__(self, self.containers)
         self.image = self.images[0]
         self.rect = self.image.get_rect(topleft=(self.x, 0))
@@ -101,21 +102,27 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
 
 
-
+class dummysound:
+    def play(self): pass
 
 def load_sound(file):
+    if not pg.mixer: return dummysound()
     file = os.path.join(game_dir, 'sounds', file)
     try:
         sound = pg.mixer.Sound(file)
         return sound
     except pg.error:
         print ('Warning, unable to load, %s' % file)
+    return dummysound()
+
 
 def main():
     pg.init()
+    pg.font.init()
     screen = pg.display.set_mode((window_width, window_height))
     pg.display.set_caption('My_game')
     clock = pg.time.Clock()
+
 
     # sprites
     img = load_image('player.png')
@@ -133,6 +140,7 @@ def main():
     background = pg.Surface(screen_rect.size)
     background.fill(BACKGROUND_COLOR)
     screen.blit(background, (0, 0))
+
     pg.display.flip()
 
     # Создание контейнеров
@@ -150,6 +158,8 @@ def main():
     gun_timer = 0
     enemy_spawn_timer = 0
     crow_sound_timer = 0
+
+
 
     while (player.alive()):
         for event in pg.event.get():
@@ -179,8 +189,6 @@ def main():
                     crow_sound.play()
                     crow_sound_timer = Enemy.CROW_SOUND_COOLDOWN
                 shot.kill()
-
-
         crow_sound_timer -= 1
         '''
         for alien in pg.sprite.groupcollide(shots, enemies, 1, 1).keys():
@@ -208,7 +216,6 @@ def main():
 
         all.clear(screen, background)
         all.update()
-
         pg.display.update(all.draw(screen))
         clock.tick(60)
 
