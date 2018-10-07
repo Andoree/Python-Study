@@ -4,13 +4,11 @@ import random
 import pygame as pg
 from pygame.locals import *
 
-# todo: Создать врагов
-# todo: Детектить колиизии
-# todo: апдейтить перемещения врагов
 window_width = 400
 window_height = 680
 BACKGROUND_COLOR = (78, 167, 187)
 enemy_size = (30, 30)
+SCORE = 0
 
 player_shot_size = (17, 35)
 screen_rect = Rect(0, 0, window_width, window_height)
@@ -57,10 +55,6 @@ class Player(pg.sprite.Sprite):
         pos = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
         return pos, self.rect.top
 
-    '''def checkCollision(self, a):
-        if self.collideRect.collidepoint(a[0], a[1]) == True:
-            print("You clicked on me!")
-    '''
 
 class Player_shot(pg.sprite.Sprite):
     speed = -15
@@ -102,18 +96,32 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
 
 
-class dummysound:
-    def play(self): pass
 
 def load_sound(file):
-    if not pg.mixer: return dummysound()
     file = os.path.join(game_dir, 'sounds', file)
     try:
         sound = pg.mixer.Sound(file)
         return sound
     except pg.error:
         print ('Warning, unable to load, %s' % file)
-    return dummysound()
+
+
+class Score(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.font = pg.font.Font(None, 40)
+        self.font.set_italic(1)
+        self.color = Color('red')
+        self.lastscore = -1
+        self.update()
+        self.rect = self.image.get_rect().move(0, 0)
+
+    def update(self):
+        if SCORE != self.lastscore:
+            self.lastscore = SCORE
+            msg = "Score: %d" % SCORE
+            self.image = self.font.render(msg, 0, self.color)
+
 
 
 def main():
@@ -148,10 +156,12 @@ def main():
     shots = pg.sprite.Group()
     enemies = pg.sprite.Group()
 
+
     # Присвоение контейнеров
     Player.containers = all
     Player_shot.containers = all, shots
     Enemy.containers = all, enemies
+    Score.containers = all
 
     player = Player()
     # Таймеры появлений объектов
@@ -160,15 +170,20 @@ def main():
     crow_sound_timer = 0
 
 
+   # global score
+    global SCORE
+
+
+    if pg.font:
+        all.add(Score())
+
 
     while (player.alive()):
         for event in pg.event.get():
             if event.type == QUIT or \
                     (event.type == KEYDOWN and event.key == K_ESCAPE):
                 return
-            '''if event.type == pg.KEYUP:
-                if event.key == pg.K_x:
-                    gun_timer = 0'''
+
 
         key_state = pg.key.get_pressed()
         horiz_direction = key_state[K_RIGHT] - key_state[K_LEFT]
@@ -177,23 +192,18 @@ def main():
 
 
 
-        # Проверка на то, что враг коснулся нашего
-        # blocks_hit_list = pg.sprite.spritecollide(player, enemies, True)
-
-        # Проверка на попадание по врагу. UPD: уничтожает и снаряд
-
+        # Проверка на попадание по врагу.
         for shot in shots:
             enemies_hit_list = pg.sprite.spritecollide(shot, enemies, True)
             if len(enemies_hit_list) > 0:
+
+                SCORE += 1
                 if crow_sound_timer <= 0:
                     crow_sound.play()
                     crow_sound_timer = Enemy.CROW_SOUND_COOLDOWN
                 shot.kill()
         crow_sound_timer -= 1
-        '''
-        for alien in pg.sprite.groupcollide(shots, enemies, 1, 1).keys():
-            crow_sound.play()
-'''
+
         for enemy in pg.sprite.spritecollide(player, enemies, 1):
             player.kill()
 
