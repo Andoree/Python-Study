@@ -158,6 +158,13 @@ def main():
 
     if pg.font:
         all.add(Score())
+        # initialiaing fonts
+    pg.font.init()
+    myfont = pg.font.SysFont('Comic Sans MS', 40)
+    myfontbot = pg.font.SysFont('Comic Sans MS', 20)
+    textover = myfont.render('Game over', False, (0, 0, 0))
+    textscore = myfont.render('Score: ' + str(SCORE), False, (0, 0, 0))
+    instruction = myfontbot.render('Press S to start a new game ', False, (0, 0, 0))
 
     while player.alive():
         for event in pg.event.get():
@@ -205,23 +212,19 @@ def main():
         pg.display.update(all.draw(screen))
         clock.tick(60)
 
+
+
     while game_over:
         for event in pg.event.get():
             if event.type == QUIT or \
                     (event.type == KEYDOWN and event.key == K_ESCAPE):
                 return
-        pg.font.init()
-        myfont = pg.font.SysFont('Comic Sans MS', 40)
-        myfontbot = pg.font.SysFont('Comic Sans MS', 20)
-        textover = myfont.render('Game over', False, (0, 0, 0))
-        textscore = myfont.render('Score: ' + str(SCORE), False, (0, 0, 0))
-        instruction = myfontbot.render('Press S to start a new game ', False, (0, 0, 0))
 
         key_state = pg.key.get_pressed()
         if key_state[K_s]:
             SCORE = 0
             main()
-            return
+            break
         screen.blit(background, (0, 0))
         screen.blit(textover, (100, 0))
         screen.blit(textscore, (125, 100))
