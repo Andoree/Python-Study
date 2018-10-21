@@ -1,7 +1,6 @@
 import os
-import random
-
 import pygame as pg
+import random
 from pygame.locals import *
 
 window_width = 400
@@ -42,13 +41,10 @@ class Player(pg.sprite.Sprite):
         self.collideRect.move_ip(horiz_direction * self.speed, vert_direction * self.speed)
         self.collideRect = self.rect.clamp(screen_rect)
 
-    def left_gun_pos(self):
-        pos = self.rect.centerx - self.gun_offset + player_shot_size[0] / 2
-        return pos, self.rect.top
-
-    def right_gun_pos(self):
-        pos = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
-        return pos, self.rect.top
+    def get_guns(self):
+        pos1 = self.rect.centerx - self.gun_offset + player_shot_size[0] / 2
+        pos2 = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
+        return (pos1, self.rect.top), (pos2, self.rect.top)
 
 
 class Player_shot(pg.sprite.Sprite):
@@ -193,8 +189,8 @@ def main():
             if gun_timer != 0:
                 gun_timer = gun_timer - 1
             else:
-                Player_shot(player.left_gun_pos())
-                Player_shot(player.right_gun_pos())
+                Player_shot(player.get_guns()[0])
+                Player_shot(player.get_guns()[1])
                 shot_sound.play()
                 gun_timer = Player_shot.GUN_RELOAD
 
