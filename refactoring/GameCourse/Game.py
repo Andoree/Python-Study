@@ -11,6 +11,8 @@ pygame.display.set_caption("My First PyGame Windows")
 mainLoop = True
 x = 375
 y = 550
+ENEMY_SPEED = 7 # An
+COLLISION_THRESHOLD = 50 # An
 isJump = False
 jumpCount = 10
 hp = 10
@@ -128,21 +130,6 @@ def attack_to_right():
 
         screen.blit(attackRightLow[animCountLowRight // 3], (x, y))
         animCountLowRight += 1
-        '''
-        for enemy in enemies:
-            if enemy.x - x < 100:
-                if enemy.direction == "left":
-                    enemy.hp -= 10
-                    if attack_sound:
-                        punch.play(1)
-                        attack_sound = False
-                    current_time = pygame.time.get_ticks()
-                    if enemy.is_dead:
-                        if current_time - enemy.start_time_death >= 250:
-                            enemies.remove(enemy)
-                            score += 1
-                            attack_sound = True
-        '''
 
 def attack_to_left():
     global animCount3, animCount2, isAttacking, animCountLowLeft, score, attack_sound
@@ -261,7 +248,7 @@ class Enemy(object):
         self.is_dead = False
         self.is_first_attack = True
         if self.direction == "right":
-            self.x = -50
+            self.x = -COLLISION_THRESHOLD
         else:
             self.x = 700
 
@@ -270,14 +257,14 @@ class Enemy(object):
         if not self.is_jumping:
             if self.collides():
                 if self.direction == "right":
-                    self.x = x - 50
+                    self.x = x - COLLISION_THRESHOLD
                 else:
-                    self.x = x + 50
+                    self.x = x + COLLISION_THRESHOLD
             else:
                 if self.direction == "right":
-                    self.x += 7
+                    self.x += ENEMY_SPEED
                 else:
-                    self.x -= 7
+                    self.x -= ENEMY_SPEED
         elif self.is_jumping:
             if self.direction == "right":
                 if self.x + self.width >= x - 80:
@@ -287,16 +274,16 @@ class Enemy(object):
                     else:
                         self.is_jumping_now = True
                 else:
-                    self.x += 7
+                    self.x += ENEMY_SPEED
             else:
-                if self.x - self.width <= x + 50:
+                if self.x - self.width <= x + COLLISION_THRESHOLD:
                     self.jump()
                     if self.jumpCount <= -10:
                         self.is_jumping_now = False
                     else:
                         self.is_jumping_now = True
                 else:
-                    self.x -= 7
+                    self.x -= ENEMY_SPEED
 
     def draw_enemy(self):
         if self.direction == "right":
@@ -343,12 +330,12 @@ class Enemy(object):
     def collides(self):
         global x
         if self.direction == "right":
-            if self.x + self.width - 50 >= x:
+            if self.x + self.width - COLLISION_THRESHOLD >= x:
                 return True
             else:
                 return False
         else:
-            if self.x - self.width + 50 <= x:
+            if self.x - self.width + COLLISION_THRESHOLD <= x:
                 return True
             else:
                 return False
