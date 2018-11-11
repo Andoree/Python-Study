@@ -2,6 +2,9 @@ import random as rnd
 
 import pygame as pg
 
+from sprites_init import spr_background, spr_player_fall, spr_player_idle, spr_player_jump, \
+    spr_player_run, spr_ball_blue, spr_ball_green, spr_ball_purple, spr_ball_red, spr_ball_explosion, spr_player_attack
+
 pg.init()
 '''
 Andrey replaced '0.1's with constant
@@ -13,52 +16,25 @@ is used 3 times
 global screen, main_surface, fps, score, font
 global entities, room_width, room_height, win_coef, spawn_count
 
+entities = pg.sprite.Group()
+
 font = pg.font.SysFont("courier", 16)
 score = 0
 room_width = 320
 room_height = 240
 win_coef = 2.5
 JUMP_COUNT = 56
+bg_anim = 0
+bg_anim_speed = 0.1
 screen = pg.display.set_mode((round(room_width * win_coef),
                               round(room_height * win_coef)))
 main_surface = pg.Surface((room_width, room_height))
 fps = 60
-entities = pg.sprite.Group()
 spawn_count = 5
 
 clock = pg.time.Clock()
 pg.display.set_caption("")
 running = True
-
-
-def load_sprite_strip(sprite, amount):
-    sprite_strip = []
-    for i in range(amount):
-        sprite_strip.append(pg.image.load(sprite.format(i + 1)))
-    return sprite_strip
-
-
-# load background
-spr_background = load_sprite_strip("sprites/bg/bg_{}.png", 6)
-bg_anim = 0
-bg_anim_speed = 0.1
-
-# player sprites
-spr_player_attack = load_sprite_strip("sprites/player/player_attack_{}.png", 5)
-spr_player_fall = load_sprite_strip("sprites/player/player_fall_{}.png", 2)
-spr_player_idle = load_sprite_strip("sprites/player/player_idle_{}.png", 4)
-spr_player_jump = load_sprite_strip("sprites/player/player_jump_{}.png", 2)
-spr_player_run = load_sprite_strip("sprites/player/player_run_{}.png", 4)
-
-# entities
-spr_ball_blue = load_sprite_strip("sprites/entities/ball_blue_{}.png", 4)
-spr_ball_green = load_sprite_strip("sprites/entities/ball_green_{}.png", 4)
-spr_ball_purple = load_sprite_strip("sprites/entities/ball_purple_{}.png", 4)
-spr_ball_red = load_sprite_strip("sprites/entities/ball_red_{}.png", 4)
-
-# other sprites
-spr_ball_explosion = load_sprite_strip(
-    "sprites/other/ball_explosion_{}.png", 3)
 
 
 # extend this to draw entity
@@ -150,6 +126,14 @@ class Player(Drawable):
                                            True, False), (self.x - self.origin_x, self.y - self.origin_y))
 
 
+
+
+def set_sprite_if_not_attack(player, sprite, image_speed):
+    if not player.attack:
+        player.set_sprite(sprite)
+        player.set_image_speed(image_speed)
+
+
 # generate stars
 def generate_stars(amount):
     stars = pg.sprite.Group()
@@ -178,21 +162,30 @@ while running:
     # player actions
     # move player
     keys = pg.key.get_pressed()
+    set_sprite_if_not_attack(player, spr_player_idle, bg_anim_speed / 2)
+    ''' replaced by method by Andrey
     if not player.attack:
         player.set_sprite(spr_player_idle)
         player.set_image_speed(bg_anim_speed / 2)
+    '''
     if keys[pg.K_LEFT] and player.x > 10:
         player.right = False
         player.x -= player.speed
+        set_sprite_if_not_attack(player, spr_player_run, bg_anim_speed)
+        ''' replaced by method by Andrey
         if not player.attack:
             player.set_sprite(spr_player_run)
             player.set_image_speed(bg_anim_speed)
+        '''
     if keys[pg.K_RIGHT] and player.x < room_width - 10:
         player.right = True
         player.x += player.speed
+        set_sprite_if_not_attack(player, spr_player_run, bg_anim_speed)
+        ''' replaced by method by Andrey
         if not player.attack:
             player.set_sprite(spr_player_run)
             player.set_image_speed(bg_anim_speed)
+        '''
     if not player.in_air:
         if keys[pg.K_UP]:
             player.in_air = True
@@ -200,12 +193,18 @@ while running:
         if player.jump_count >= -JUMP_COUNT:
             player.y -= player.jump_count / 8
             player.jump_count -= 1
+            if player.jump_count < 0:
+                set_sprite_if_not_attack(player, spr_player_fall, bg_anim_speed)
+            else:
+                set_sprite_if_not_attack(player, spr_player_jump, bg_anim_speed)
+            ''' replaced by methods by Andrey
             if player.jump_count < 0 and not player.attack:
                 player.set_sprite(spr_player_fall)
                 player.set_image_speed(bg_anim_speed)
             elif player.jump_count >= 0 and not player.attack:
                 player.set_sprite(spr_player_jump)
                 player.set_image_speed(bg_anim_speed)
+            '''
         else:
             player.in_air = False
             player.jump_count = JUMP_COUNT
