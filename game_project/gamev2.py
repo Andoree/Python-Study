@@ -1,7 +1,6 @@
 import os
-import random
-
 import pygame as pg
+import random
 from pygame.locals import *
 
 window_width = 400
@@ -42,13 +41,10 @@ class Player(pg.sprite.Sprite):
         self.collideRect.move_ip(horiz_direction * self.speed, vert_direction * self.speed)
         self.collideRect = self.rect.clamp(screen_rect)
 
-    def left_gun_pos(self):
-        pos = self.rect.centerx - self.gun_offset + player_shot_size[0] / 2
-        return pos, self.rect.top
-
-    def right_gun_pos(self):
-        pos = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
-        return pos, self.rect.top
+    def get_guns(self):
+        pos1 = self.rect.centerx - self.gun_offset + player_shot_size[0] / 2
+        pos2 = self.rect.centerx + self.gun_offset + player_shot_size[0] / 2
+        return (pos1, self.rect.top), (pos2, self.rect.top)
 
 
 class Player_shot(pg.sprite.Sprite):
@@ -162,6 +158,13 @@ def main():
 
     if pg.font:
         all.add(Score())
+        # initialiaing fonts
+    pg.font.init()
+    myfont = pg.font.SysFont('Comic Sans MS', 40)
+    myfontbot = pg.font.SysFont('Comic Sans MS', 20)
+    textover = myfont.render('Game over', False, (0, 0, 0))
+    textscore = myfont.render('Score: ' + str(SCORE), False, (0, 0, 0))
+    instruction = myfontbot.render('Press S to start a new game ', False, (0, 0, 0))
 
     while player.alive():
         for event in pg.event.get():
@@ -193,8 +196,8 @@ def main():
             if gun_timer != 0:
                 gun_timer = gun_timer - 1
             else:
-                Player_shot(player.left_gun_pos())
-                Player_shot(player.right_gun_pos())
+                Player_shot(player.get_guns()[0])
+                Player_shot(player.get_guns()[1])
                 shot_sound.play()
                 gun_timer = Player_shot.GUN_RELOAD
 
@@ -209,23 +212,19 @@ def main():
         pg.display.update(all.draw(screen))
         clock.tick(60)
 
+
+
     while game_over:
         for event in pg.event.get():
             if event.type == QUIT or \
                     (event.type == KEYDOWN and event.key == K_ESCAPE):
                 return
-        pg.font.init()
-        myfont = pg.font.SysFont('Comic Sans MS', 40)
-        myfontbot = pg.font.SysFont('Comic Sans MS', 20)
-        textover = myfont.render('Game over', False, (0, 0, 0))
-        textscore = myfont.render('Score: ' + str(SCORE), False, (0, 0, 0))
-        instruction = myfontbot.render('Press S to start a new game ', False, (0, 0, 0))
 
         key_state = pg.key.get_pressed()
         if key_state[K_s]:
             SCORE = 0
             main()
-            return
+            break
         screen.blit(background, (0, 0))
         screen.blit(textover, (100, 0))
         screen.blit(textscore, (125, 100))
