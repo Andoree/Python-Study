@@ -1,7 +1,9 @@
 import os
 import shutil
 
-from validators import validate_supercopy
+from file_downloader import FileDownloader
+from grep_operations import grep_file, grep_dir_recursive, grep_dir_non_recursive
+from validators import validate_supercopy, validate_wget
 from validators import validate_grep
 
 
@@ -15,7 +17,8 @@ def process_supercopy(input_data):
         new_filename = filename[:k] + str(i).zfill(size) + '.' + filename[k + 1:]
         shutil.copy(filename, new_filename)
 
-def process_makenote(input_data):
+
+def process_grep(input_data):
     try:
         search_type, search_item, pattern, recursive = validate_grep(input_data)
         if search_type == 'file':
@@ -32,10 +35,26 @@ def process_makenote(input_data):
     3 или 4 слова.
     PATH re.compile - валидация
     '''
-# validation
 
 
-# processing
+def process_wget(input_data):
+    data = validate_wget(input_data)
+    if data:
+        url = data[0]
+        if data[1]:
+            extension = data[1]
+            # todo: а куда скачивать?
+            file_downloader = FileDownloader(url, extension)
+            file_downloader.download_files()
+        else:
+            # todo : download with url only
+            pass
+    #    print(data)
+    #    print('op : ' + str(data[0]))
+    #    print('url : ' + data[1])
+    #    print('extension : ' + str(data[2]))
+    pass
+
 
 def main():
     while True:
@@ -49,15 +68,22 @@ def main():
         elif command == 'supercopy':
             process_supercopy(input_data)
         elif command == 'wget':
-            pass
+            process_wget(input_data)
         elif command == 'makenote':
-            process_makenote(input_data)
-        elif command == 'grep':
             pass
+        #   process_makenote(input_data)
+        elif command == 'grep':
+            process_grep(input_data)
+            pass
+        elif command == '':
+            print('$')
         else:
             print('command not found')
-    # elif command == ''
+    #
 
 
-if __name__ == '__main__':
-    main()
+process_wget(('wget', 'dada', 'pdf'))
+process_wget(('wget', 'dada',))
+# if __name__ == '__main__':
+#    main()
+ 
