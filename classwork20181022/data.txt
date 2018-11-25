@@ -1,0 +1,31 @@
+Mon
+10:10	Informatics		Sidikov
+11:50-13:20		EnglishAbramskiy
+14:00    Algebra    Korneeva
+16:00    Databases   Yakupov
+18:00-18:40    PE  Shirokova
+20:00   Psychology  Abramskiy
+Tue
+10:10   Algorithms Abramskiy``
+11:50-13:20   English Abramskiy
+14:00   Algebra Abramskiy
+16:00   Databases   Abramskiy
+18:00-18:40 PE  Abramskiy
+20:00   Probability Theory  Abramskiy
+Wed
+10:10   Sleeping training Salimov
+11:50-13:20   Descrete Math Arslanov
+14:00   Algebra Arslanov
+16:00   Probability Theory  Shirokova
+18:00-18:40 Networks    Macsetin
+20:00   Informatics  Abramskiy
+Thu
+10:10   Sleeping training   Salimov
+11:50-13:20   English   Melnikova
+14:00   PE  Mullagaliev
+16:00   Geometry    Shurigin
+18:00-18:40 Networks    Macsetin
+Fri
+10:10   Descrete Math   Korneeva
+11:50-13:20   English   Melnikova
+
