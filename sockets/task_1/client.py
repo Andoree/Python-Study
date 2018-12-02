@@ -1,6 +1,5 @@
 import socket
 import multiprocessing as mp
-import time
 
 
 class Client:
@@ -13,17 +12,18 @@ class Client:
     def listen_server(self):
         while True:
             data = self.socket.recv(1024)
-            print('message : ' + data.decode('UTF-8'))
+            parts = data.decode('UTF-8').split('\n')
+            print('author : ' + parts[0] + '\n' + parts[1] + '\n' + parts[2])
 
     def connect(self):
         self.socket.connect((Client.address, Client.port))
         print('connected to server!')
         thread = mp.Process(target=self.listen_server)
         thread.start()
-        time.sleep(0.01)
+        username = input('Enter username:\n')
+        self.socket.send(username.encode())
         while True:
-            # todo : message with timestamp and name
-            text = input('Enter message text:\n')
+            text = input()
             self.socket.send(text.encode())
 
 
