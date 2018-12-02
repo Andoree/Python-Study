@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 from task_2.vacancy_info import VacancyInfo
 
-keywords = ('требования', 'компетенции', 'подходишь', 'если')#'если ты', 'если у вас'
+keywords = ('требования', 'компетенции', 'подходишь', 'если')  # 'если ты', 'если у вас'
 
 
 def save_file(url):
@@ -31,6 +31,12 @@ def validate_strong(strong_tag):
             return True
     pass
 
+def get_li_tags_text(ul_tag):
+    lis = []
+    for li in ul_tag.find_all('li'):
+        lis.append(li.text)
+    return lis
+
 
 def find_requirements(soup):
     reqs = []
@@ -40,15 +46,29 @@ def find_requirements(soup):
         reqs.append('Опыт работы : %s' % experience.text)
     for strong_tag in vacancy_description.find_all('strong'):
         if validate_strong(strong_tag):
+            print(strong_tag)
             parent = strong_tag.parent
-            print(strong_tag.text)
-            print(parent.find_next_sibling().findChildren())
+            print(parent.parent)
+            ul_tag = parent.find_next_sibling('ul')
+            if ul_tag:
+                for req in get_li_tags_text(ul_tag):
+                    reqs.append(req)
+                print(ul_tag)
+
+            else:
+                ul_tag = parent.parent.find_next_sibling('ul')
+                if ul_tag:
+                    for req in get_li_tags_text(ul_tag):
+                        reqs.append(req)
+                    print(ul_tag)
+
+
+            #print(strong_tag.text)
+            #print(parent.find_next_sibling().findChildren())
 
             pass
-            # todo: начать искать требования
         # print('Опыт работы : %s' % experience.text)
 
-    # todo : достать опыт работы есть он есть
     return reqs
 
 
@@ -63,16 +83,15 @@ def parse_vacancy(url):
     requirements = find_requirements(soup)
 
 
-#  vacancy_info = VacancyInfo(title, salary, requirements)
-#  print(vacancy_info)
-# print(title, salary)
+    vacancy_info = VacancyInfo(title, salary, requirements)
+    print(vacancy_info)
+    #print(title, salary)
 # todo:
 
 
 def main():
     url = 'https://career.ru/vacancy/29028072'
     parse_vacancy(url)
-
 
 
 if __name__ == '__main__':

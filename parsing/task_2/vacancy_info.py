@@ -5,7 +5,7 @@ class VacancyInfo:
         self.requirements = requirements
 
     def __str__(self):
-        s = 'title: %\nsalary : %\nТребования:' % (self.title, self.salary)
+        s = 'title: %s\nsalary : %s\nТребования:\n' % (self.title, self.salary)
         for req in self.requirements:
             s += '- ' + req + '\n'
         return s
