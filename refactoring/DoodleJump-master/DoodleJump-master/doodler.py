@@ -9,13 +9,14 @@ class Doodler(pygame.sprite.Sprite):
     isJump = False
     speed = 25  # Not Andrey: скорость дудлера по горизонтали
     images = []
-    SHIFT_THRESHOLD = 200 # порог срабатывания смещения карты вынесен в константу
+    SHIFT_THRESHOLD = 200  # порог срабатывания смещения карты вынесен в константу
 
     '''
     Изображения больше не подгружаются при каждом апдейте.
     Загрузка спрайта вынесена в отдельный метод
     '''
 
+    @staticmethod
     def load_sprites(path):
         Doodler.images = [
             pygame.image.load(path + 'corgi-small-left-new-eyes.png'),
@@ -23,8 +24,8 @@ class Doodler(pygame.sprite.Sprite):
         ]
 
     def __init__(self):
-       # super(Doodler, self).__init__() - не понял, что это было.
-       # Закомменчивание ничего не изменило
+        # super(Doodler, self).__init__() - не понял, что это было.
+        # Закомменчивание ничего не изменило
         Doodler.load_sprites('static/')
         self.image = Doodler.images[0]
         self.rect = self.image.get_rect()
@@ -38,7 +39,7 @@ class Doodler(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT] and self.x > 0:
             self.x -= self.speed
             self.image = Doodler.images[1]
-        if keys[pygame.K_RIGHT] and self.x < Doodler.x: # changed hardcoded number to
+        if keys[pygame.K_RIGHT] and self.x < Doodler.x:  # changed hardcoded number to
             # Doodler.x
             self.x += self.speed
             self.image = Doodler.images[0]

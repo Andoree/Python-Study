@@ -3,8 +3,6 @@ import random
 import pygame
 from doodler import Doodler
 
-image_dir = 'static/'
-
 
 class DoodleJump:
     '''
@@ -38,7 +36,7 @@ class DoodleJump:
         self.platforms.append([a, self.platforms[-1][1] - 50, 0])
 
         self.platforms.append([random.randint(0, DoodleJump.GAME_FIELD_EDGE), self.platforms[-1][1] - 100, 0])
-        if self.platforms[1][1] - self.doodler.cameray >\
+        if self.platforms[1][1] - self.doodler.cameray > \
                 DoodleJump.PLATFORM_POP_CONST:
             self.platforms.pop(0)
 
@@ -56,12 +54,14 @@ class DoodleJump:
                 1] - self.doodler.cameray:
                 self.doodler.jump = 15
                 self.doodler.gravity = 0
+
     '''
     нигде не применённый метод
     def isDeath(self):
         if self.doodler.y - self.doodler.cameray > 1000:
             self.platforms = [[0, -100, 0]]
     '''
+
     def main(self):
         #   platform = Platform()
 
