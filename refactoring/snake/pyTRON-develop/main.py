@@ -6,6 +6,7 @@ import time
 #
 
 # Colors
+from player import Player
 
 BLACK = (0, 0, 0)
 YELLOW = (229, 226, 71)
@@ -22,46 +23,9 @@ OFFSET = HEIGHT - WIDTH  # vertical space at top of window
 WALL_WIDTH = 15
 WINDOW_CAPTION = "pyTRON"
 GAME_FPS = 60
+ENDGAME_SCORE = 10  # An: endgame score
 
 pygame.init()
-
-
-#
-# PLAYER
-#
-
-class Player:
-    def __init__(self, x, y, direction, color):
-        self.x = x  # player x coord
-        self.y = y  # player y coord
-        self.speed = 1  # player speed
-        self.direction = direction  # player direction
-        self.color = color
-        self.boost = False  # is boost active
-        self.start_boost = time.time()  # used to control boost length
-        self.boosts = 3
-        self.rect = pygame.Rect(self.x - 1, self.y - 1, 2,
-                                2)  # player rect object
-
-    def __draw__(self):
-        self.rect = pygame.Rect(self.x - 1, self.y - 1, 2, 2)  # redefines rect
-        pygame.draw.rect(screen, self.color, self.rect,
-                         0)  # draws player onto screen
-
-    def __move__(self):
-        if not self.boost:  # player isn't currently boosting
-            self.x += self.direction[0]
-            self.y += self.direction[1]
-        else:
-            self.x += self.direction[0] * 2
-            self.y += self.direction[1] * 2
-
-    def __boost__(self):
-        if self.boosts > 0:
-            self.boosts -= 1
-            self.boost = True
-            self.start_boost = time.time()
-
 
 #
 # SETUP
@@ -82,6 +46,31 @@ def new_game():
     new_p1 = Player(start_pos[0], start_pos[1], (2, 0), P1_COLOR)
     new_p2 = Player(WIDTH - start_pos[0], start_pos[1], (-2, 0), P2_COLOR)
     return new_p1, new_p2
+
+
+# An: method for eliminating code duplicate
+def handle_key(key_event, key_up, key_down, key_left, key_right, key_boost, p_id):
+    if key_event.key == key_up:
+        objects[p_id].direction = (0, -2)
+    elif key_event.key == key_down:
+        objects[p_id].direction = (0, 2)
+    elif key_event.key == key_left:
+        objects[p_id].direction = (-2, 0)
+    elif key_event.key == key_right:
+        objects[p_id].direction = (2, 0)
+    elif key_event.key == key_boost:
+        objects[p_id].__boost__()
+
+
+# An: method for eliminating code duplicate
+def process_boost(object, sign, color):
+    boosts = BOOSTS_FONT.render("%d boosts" % object.boosts, 1, color)
+    boosts_pos = boosts.get_rect()
+    boosts_pos.centerx = (WIDTH + sign * (int(boosts.get_width() / 2) + WALL_WIDTH + 10)) % WIDTH
+    boosts_pos.centery = \
+        OFFSET + int(boosts.get_height() / 2) + WALL_WIDTH + 10
+
+    screen.blit(boosts, boosts_pos)
 
 
 # create players and add to list
@@ -114,30 +103,14 @@ while not finish:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 finish = True
-
+            # An : eliminated key handle code duplicate
             # === Player 1 === #
-            if event.key == pygame.K_w:
-                objects[0].direction = (0, -2)
-            elif event.key == pygame.K_s:
-                objects[0].direction = (0, 2)
-            elif event.key == pygame.K_a:
-                objects[0].direction = (-2, 0)
-            elif event.key == pygame.K_d:
-                objects[0].direction = (2, 0)
-            elif event.key == pygame.K_TAB:
-                objects[0].__boost__()
+            handle_key(event, pygame.K_w, pygame.K_s,
+                       pygame.K_a, pygame.K_d, pygame.K_TAB, p_id=0)
 
-            # === Player 2 === #
-            if event.key == pygame.K_UP:
-                objects[1].direction = (0, -2)
-            elif event.key == pygame.K_DOWN:
-                objects[1].direction = (0, 2)
-            elif event.key == pygame.K_LEFT:
-                objects[1].direction = (-2, 0)
-            elif event.key == pygame.K_RIGHT:
-                objects[1].direction = (2, 0)
-            elif event.key == pygame.K_RSHIFT:
-                objects[1].__boost__()
+            # === Player     2 === #
+            handle_key(event, pygame.K_UP, pygame.K_DOWN,
+                       pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT, p_id=1)
 
     screen.fill(BG_COLOR)
 
@@ -167,7 +140,7 @@ while not finish:
             tails.append(
                 (o.rect, '1')) if o.color == P1_COLOR \
                 else tails.append((o.rect, '2'))
-        o.__draw__()
+        o.__draw__(screen)
         o.__move__()
 
     for tail_wall in tails:
@@ -180,7 +153,6 @@ while not finish:
         else:
             pygame.draw.rect(screen, P2_COLOR, tail_wall[0], 0)
 
-
     score_text = SCORE_FONT.render('%d : %d' % (players_score[0],
                                                 players_score[1]),
                                    1,
@@ -190,22 +162,10 @@ while not finish:
     score_text_pos.centery = int(OFFSET / 2)
     screen.blit(score_text, score_text_pos)
 
-    boosts_p1 = BOOSTS_FONT.render("%d boosts" % objects[0].boosts, 1, P1_COLOR)
-    boosts_p1_pos = boosts_p1.get_rect()
-    boosts_p1_pos.centerx = int(boosts_p1.get_width() / 2) + WALL_WIDTH + 10
-    boosts_p1_pos.centery = \
-        OFFSET + int(boosts_p1.get_height() / 2) + WALL_WIDTH + 10
-    screen.blit(boosts_p1, boosts_p1_pos)
-
-    boosts_p2 = BOOSTS_FONT.render("%d boosts" % objects[1].boosts, 1, P2_COLOR)
-    boosts_p2_pos = boosts_p2.get_rect()
-    boosts_p2_pos.centerx = \
-        WIDTH - int(boosts_p2.get_width() / 2) - WALL_WIDTH - 10
-    boosts_p2_pos.centery = \
-        OFFSET + int(boosts_p2.get_height() / 2) + WALL_WIDTH + 10
-    screen.blit(boosts_p2, boosts_p2_pos)
-
-    if players_score[0] >= 10 or players_score[1] >= 10:
+    process_boost(objects[0], 1, P1_COLOR)
+    process_boost(objects[1], -1, P2_COLOR)
+    # An : eliminated code duplicate
+    if players_score[0] >= ENDGAME_SCORE or players_score[1] >= ENDGAME_SCORE:
         finish = True
 
     pygame.display.flip()
