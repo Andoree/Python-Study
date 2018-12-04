@@ -1,5 +1,7 @@
-from MainMenu import Main as menu
-from Game import Game as game
+# An: as menu --> as MainMenu
+from MainMenu import Main as MainMenu
+# An: Game as game --> Game
+from Game import Game
 from GameOver import Main as gg
 import sys
 
@@ -15,9 +17,9 @@ def exit_game():
 
 while 1:
     if state == 1:
-        state = menu.load(game_name, score, name)
+        state = MainMenu.load(game_name, score, name)
     elif state == 2:
-        state, score = game.main(game())
+        state, score = Game.main(Game())
     elif state == 3:
         state, name = gg.load(game_name, str(score))
     elif state == 4:

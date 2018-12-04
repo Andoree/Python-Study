@@ -17,12 +17,13 @@ class MenuViewElement(object):
         self.colour = colour
         self.surface = pygame.Surface(self.size)
 
+    # An: renamed xcoord, ycoord
     def draw(self):
         text = self.font.render(self.label, 1, self.colour)
         text_height = text.get_height()
-        ycoord = (self.surface.get_height() - text_height) / 2
-        xcoord = (self.surface.get_width() - text.get_width()) / 2
-        return text, (self.pos[0] + xcoord, self.pos[1] + ycoord)
+        y_coord = (self.surface.get_height() - text_height) / 2
+        x_coord = (self.surface.get_width() - text.get_width()) / 2
+        return text, (self.pos[0] + x_coord, self.pos[1] + y_coord)
 
 
 class Info:
@@ -87,7 +88,7 @@ class Selector:
             self.state = 2
 
     def _return(self):
-            return self.state + 2
+        return self.state + 2
 
 
 def load_scores(scores_file_name, score, name):
@@ -104,7 +105,7 @@ def load_scores(scores_file_name, score, name):
     scores_list = []
     for line in file:
         lines = line.split('$')
-        scores_list.append((lines[0], int(lines[1])),)
+        scores_list.append((lines[0], int(lines[1])), )
     scores_list.sort(key=lambda line: line[1], reverse=True)
     file = open(scores_file_name, 'w')
 
@@ -122,17 +123,16 @@ def load_scores(scores_file_name, score, name):
 
 
 class Main:
-
     pygame.init()
 
     @staticmethod
     def load(game_name, score, name):
         scores = load_scores('scores.txt', score, name)
         scores_list_info = (("Play game", -1, title_font, 0),
-             ("Scores", -1, subtitle_font, 50))
+                            ("Scores", -1, subtitle_font, 50))
         first_score_offset = 90
         for sc in scores:
-            scores_list_info = scores_list_info + ((sc[0] + ' '+ str(sc[1]), -1, text_font, first_score_offset),)
+            scores_list_info = scores_list_info + ((sc[0] + ' ' + str(sc[1]), -1, text_font, first_score_offset),)
             first_score_offset += 35
 
         info_text = (

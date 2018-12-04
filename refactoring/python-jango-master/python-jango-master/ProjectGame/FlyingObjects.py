@@ -2,7 +2,8 @@ import pygame, os
 
 
 class FlyingObjects(pygame.sprite.Sprite):
-    def __init__(self, img, cX, cY):
+    # An: renamed cX and cY
+    def __init__(self, img, c_x, c_y):
         # Создаем спрайт из картинки
         pygame.init()
         pygame.sprite.Sprite.__init__(self)
@@ -10,8 +11,8 @@ class FlyingObjects(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
         # Перемещаем картинку в её начальные координаты
-        self.rect.x = cX
-        self.rect.y = cY
+        self.rect.x = c_x
+        self.rect.y = c_y
 
     def load_image(self, name, colorkey=None):  # отображение картинок
         fullname = os.path.join('data', name)

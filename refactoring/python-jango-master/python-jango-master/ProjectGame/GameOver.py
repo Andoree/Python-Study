@@ -1,5 +1,5 @@
 import pygame
-
+import Game
 import MainMenu
 
 title_font = pygame.font.Font(None, 50)

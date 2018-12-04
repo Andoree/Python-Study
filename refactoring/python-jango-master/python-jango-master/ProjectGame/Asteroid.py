@@ -2,5 +2,6 @@ from FlyingObjects import FlyingObjects
 
 
 class Asteroid(FlyingObjects):
-    def __init__(self, cX, cY):
-        FlyingObjects.__init__(self, "asteroid.png", cX, cY)
+    # An: renamed cX, cY
+    def __init__(self, c_x, c_y):
+        FlyingObjects.__init__(self, "asteroid.png", c_x, c_y)
