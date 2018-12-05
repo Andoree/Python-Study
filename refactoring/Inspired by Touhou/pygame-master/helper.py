@@ -1,7 +1,7 @@
 import os
 
 import pygame as pg
-
+pg.init()
 PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 MUSIC_PATH = os.path.join(PROJECT_PATH, 'audio')
 print(MUSIC_PATH)

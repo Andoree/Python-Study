@@ -10,7 +10,7 @@ class Enemy(pg.sprite.Sprite):
     enemy_img = load_sprite('spr_enemy0.png')  # An: sprite loading
     shoot_sound = load_sound('enemy_shoot.wav')
 
-    def __init__(self, pos, hp=1, speed=3):
+    def __init__(self,all_sprites, bad_bullets, pos, hp=1, speed=3):
         pg.sprite.Sprite.__init__(self)
         self.image = Enemy.enemy_img
         self.rect = self.image.get_rect()
@@ -31,10 +31,12 @@ class Enemy(pg.sprite.Sprite):
         self.movement_pattern = 1  # random.randint(1,3)
         self.snd_enemy_shoot = Enemy.shoot_sound
         self.snd_enemy_shoot.set_volume(0.1)
+        self.all_sprites = all_sprites
+        self.bad_bullets = bad_bullets
 
     def shoot(self, all_sprites, bad_bullets):
         self.snd_enemy_shoot.play()
-        new_shot = BadGuyShot(self.pos)
+        new_shot = BadGuyShot(self.pos, self.player_pos)
         all_sprites.add(new_shot)
         bad_bullets.add(new_shot)
 
@@ -58,7 +60,7 @@ class Enemy(pg.sprite.Sprite):
             self.distance -= 1
         if self.distance == 0:
             if self.can_shoot:
-                self.shoot()
+                self.shoot(self.all_sprites, self.bad_bullets)
             self.can_shoot = False
             if now - self.start_time >= self.stop_time:
                 self.distance = self.dist

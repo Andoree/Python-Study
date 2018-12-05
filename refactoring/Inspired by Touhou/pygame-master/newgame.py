@@ -1,4 +1,3 @@
-
 import random
 import time
 
@@ -42,6 +41,12 @@ bad_bullets = pg.sprite.Group()
 global difficulty
 
 
+def check_quit(pg, events):
+    for event in events:
+        if event.type == pg.QUIT:
+            pg.quit()
+
+
 def start_screen():
     win.fill((10, 10, 30))
     win.blit(text, (320 - text.get_width() // 2, 200 - text.get_height() // 2))
@@ -51,28 +56,29 @@ def start_screen():
     pg.display.update()
     quit_start = False
     while not quit_start:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-                quit_start = True
-            keys = pg.key.get_pressed()
-            if keys[pg.K_SPACE]:
-                snd_startup.play()
-                time.sleep(1)
-                quit_start = True
-                step()
+        if check_quit(pg, pg.event.get()):
+            break
+            # sys.exit() An: unnecessary
+            # quit_start = True An: why does the
+            # method continue processing keys after exit?
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_SPACE]:
+            snd_startup.play()
+            time.sleep(1)
+            quit_start = True
+            step()
 
 
 def spawn_enemies(d, t_pos):
     for i in range(d):
-        m = random.choice([EnemyX, Enemy])(t_pos)
+        m = random.choice([EnemyX, Enemy])(all_sprites, bad_bullets, t_pos)
         all_sprites.add(m)
         enemies.add(m)
 
 
 def step():
-    player = Player((SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64))
+    player = Player((SCREEN_WIDTH / 2, SCREEN_HEIGHT - 64), all_sprites, bullets)
     player_pos = player.pos
     player.lives = 3
     player.scores = 0
@@ -84,10 +90,9 @@ def step():
     spawn_enemies(difficulty, player.pos)
     while game_run:
         clock.tick(fps)
-        #player_pos = player.pos
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
+        # player_pos = player.pos
+        if check_quit(pg, pg.event.get()):
+            break
 
         all_sprites.update()
         player.update()
@@ -145,8 +150,8 @@ def gameover_screen(score):
     quit_start = False
     while not quit_start:
         for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
+            if check_quit(pg, pg.event.get()):
+                break
                 sys.exit()
                 quit_start = True
             if event.type == pg.KEYDOWN:

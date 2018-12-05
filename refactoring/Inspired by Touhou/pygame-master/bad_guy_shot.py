@@ -7,7 +7,7 @@ import pygame as pg
 class BadGuyShot(pg.sprite.Sprite):
     bad_guy_shot_img = load_sprite('spr_enemy_bullet_0.png')
 
-    def __init__(self, pos):
+    def __init__(self, pos, player_pos):
         pg.sprite.Sprite.__init__(self)
         self.image = BadGuyShot.bad_guy_shot_img
         self.rect = self.image.get_rect(center=pos)

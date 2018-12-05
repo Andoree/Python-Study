@@ -14,12 +14,12 @@ class Player(pg.sprite.Sprite):
         load_sound('player_hit.wav')
     )
 
-    def __init__(self, pos):
+    def __init__(self, pos, all_sprites, bullets):
         pg.sprite.Sprite.__init__(self)
         self.image = Player.player_imgs[0]
         self.rect = self.image.get_rect(center=pos)
         self.radius = 20
-        self.rect.centerx =SCREEN_WIDTH / 2
+        self.rect.centerx = SCREEN_WIDTH / 2
         self.rect.bottom = SCREEN_HEIGHT - 5
         self.pos = pos
         self.x = pos[0]
@@ -39,6 +39,8 @@ class Player(pg.sprite.Sprite):
         self.snd_player_shoot.set_volume(0.1)
         self.snd_player_hit.set_volume(0.5)
         self.iframes = [False, 500]
+        self.all_sprites = all_sprites
+        self.bullets = bullets
 
     def shoot(self, now, all_sprites, bullets):
         self.snd_player_shoot.play()
@@ -67,7 +69,6 @@ class Player(pg.sprite.Sprite):
 
     # keys = {'right':False, 'down':False, 'left':False, 'up':False}
     def update(self):
-        print(self.image)
         keys = pg.key.get_pressed()
         self.pos = (self.rect.x, self.rect.y)
         player_pos = self.pos
@@ -84,7 +85,7 @@ class Player(pg.sprite.Sprite):
                 self.rect.x += self.low_speed
                 if keys[pg.K_UP] and self.rect.y > FIELD_MARGIN:
                     self.rect.y -= self.low_speed
-                elif keys[pg.K_DOWN] and self.rect.y < (SCREEN_HEIGHT  - self.height):
+                elif keys[pg.K_DOWN] and self.rect.y < (SCREEN_HEIGHT - self.height):
                     self.rect.y += self.low_speed
             elif keys[pg.K_UP] and self.rect.y > FIELD_MARGIN:
                 self.rect.y -= self.low_speed
@@ -110,4 +111,4 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_z]:
             now = pg.time.get_ticks()
             if now - self.last_shot >= self.cooldown:
-                self.shoot(now)
+                self.shoot(now, self.all_sprites, self.bullets)

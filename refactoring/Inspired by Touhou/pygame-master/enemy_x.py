@@ -9,7 +9,7 @@ class EnemyX(Enemy):
     enemy_x_img = load_sprite('spr_enemy1.png')
     shoot_sound = load_sound('enemy_shoot.wav')
 
-    def __init__(self, pos, hp=1, speed=5):
+    def __init__(self, all_sprites, bad_bullets, pos, hp=1, speed=5,):
         pg.sprite.Sprite.__init__(self)
         self.image = EnemyX.enemy_x_img
         self.rect = self.image.get_rect()
@@ -39,6 +39,8 @@ class EnemyX(Enemy):
             self.rect.x = 0
         else:
             self.rect.x = 640
+        self.all_sprites = all_sprites
+        self.bad_bullets = bad_bullets
 
     def movement_pattern_1(self):
         now = pg.time.get_ticks()
@@ -48,4 +50,4 @@ class EnemyX(Enemy):
             self.rect.x -= 2
         if now - self.last_shot >= self.cooldown:
             self.last_shot = now
-            self.shoot()
+            self.shoot(self.all_sprites, self.bad_bullets)
