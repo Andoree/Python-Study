@@ -1,8 +1,10 @@
 class Listener:
-    def __init__(self, server, conn, address):
+    def __init__(self, server, conn, address, listener_number):
         self.server = server
         self.connection = conn
         self.address = address
+        self.listener_number = listener_number
+        self.username = ''
 
     def listen(self):
         data = self.connection.recv(1024)
@@ -15,5 +17,7 @@ class Listener:
         self.connection.close()
 
     def receive_message(self, username, text, message_time):
-        print('sending data')
         self.connection.send(str(username + '\n' + text + '\n' + message_time).encode())
+
+    def __eq__(self, other):
+        return self.listener_number == other.listener_number

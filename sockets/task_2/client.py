@@ -25,12 +25,10 @@ class Client:
         username = input('Enter your username please\n')
         self.socket.send(username.encode())
         priority = self.socket.recv(64).decode('UTF-8')
-        print('priority : ' + priority)
         if priority == '1':
             game_state = self.socket.recv(2048).decode('UTF-8')
             print(game_state)
         while True:
-            # todo: receive role from server(first turn)
             hit_power = input('enter hit power\n')
             if Client.validate_hit_power(hit_power):
                 self.socket.send(hit_power.encode())
